@@ -7,6 +7,7 @@ solve_task(Task,Cost) :-
     solve_task_astar(Task,[_:P:[]],[],[P|Path]), !,
     (
         length(Path,ThisLeg), 
+        % if we have enough energy then proceed to the target
         Energy>=ThisLeg, 
         agent_do_moves(A,Path),
         Cost is ThisLeg
@@ -44,6 +45,7 @@ solve_task_astar(Task, [_:Pos:RPath | Queue], Visited, Path) :-
     ), Children),
     
     append(Queue, Children, UnsortedQueue),
+    % sort queue by lowest score and recurse with new queue
     sort(1, @=<, UnsortedQueue, NewQueue),
     solve_task_astar(Task, NewQueue, [Pos|Visited], Path).
 
@@ -57,6 +59,3 @@ achieved(Task,Pos) :-
     Task=find(Obj), map_adjacent(Pos,_,Obj)
     ;
     Task=go(Pos).
-
-% heuristic for going to charge station closest to goal
-% allow the agent to visit infinite charge stations

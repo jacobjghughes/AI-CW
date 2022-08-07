@@ -19,7 +19,7 @@ eliminate(Actors,Actor, VisitedOracles) :-
     \+ agent_check_oracle(Agent, o(NextOracle)), 
     !,
     (
-        % if agent energy after the task is above the threshold of 25% max energy then we can proceed otherwise find a charger
+        % if agent energy after the task is above the threshold of 25% max energy then we can proceed 
         % 25% seems to work well from testing random maps
         length(Path, PathCost),
         (AgentEnergy - PathCost - EnergyAsk) >= EnergyMax*0.25,
@@ -31,6 +31,9 @@ eliminate(Actors,Actor, VisitedOracles) :-
         eliminate(ViableAs, Actor, NewVisited)
         ;
 
+        % if our energy would go below the threshold, find and navigate to the nearest charger 
+        % then search for the nearest oracle from the new position and proceed
+        % if we cannot find a valid oracle now then we cannot proceed and the actor remains unknown
         solve_task(find(c(Charger)),_),
         agent_topup_energy(Agent, c(Charger)),
         get_agent_position(Agent, NewPos),
